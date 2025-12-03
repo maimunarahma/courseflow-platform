@@ -1,97 +1,148 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+
+import axios from 'axios';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from "sonner";
 import { User } from '@/types';
-import { mockUsers } from '@/data/mockData';
 
 interface AuthContextType {
   user: User | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (formData: RegisterPayload) => Promise<void>;
   logout: () => void;
+  loading: boolean;
   isAuthenticated: boolean;
-  isAdmin: boolean;
+  setUser: (user: User | null) => void;
+  error: any;
 }
+
+type RegisterPayload = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Load logged in user
   useEffect(() => {
-    const storedUser = localStorage.getItem('coursemaster_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/user/me`,
+          {  withCredentials: true }
+        );
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Check mock users (in real app, this would be an API call)
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (foundUser) {
-      // Mock password check (any password works for demo)
-      setUser(foundUser);
-      localStorage.setItem('coursemaster_user', JSON.stringify(foundUser));
-      setIsLoading(false);
-      return { success: true };
-    }
-    
-    setIsLoading(false);
-    return { success: false, error: 'Invalid email or password' };
-  };
+        const userData = res.data?.data;
 
-  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Check if user already exists
-    const existingUser = mockUsers.find(u => u.email === email);
-    if (existingUser) {
-      setIsLoading(false);
-      return { success: false, error: 'Email already registered' };
-    }
-    
-    // Create new user
-    const newUser: User = {
-      id: `user-${Date.now()}`,
-      email,
-      name,
-      role: 'student',
-      createdAt: new Date().toISOString(),
+        setUser(userData || null);
+        setIsAuthenticated(!!userData);
+
+        queryClient.setQueryData(['auth-user'], userData || null);
+      } catch {
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    mockUsers.push(newUser);
-    setUser(newUser);
-    localStorage.setItem('coursemaster_user', JSON.stringify(newUser));
-    setIsLoading(false);
-    return { success: true };
+
+    fetchUser();
+  }, [queryClient]);
+
+  // Register
+  const register = async (formData: RegisterPayload) => {
+    setLoading(true);
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/user/register`,
+        formData,
+        { withCredentials: true }
+      );
+
+      const userData = res.data.data;
+      setUser(userData);
+      setIsAuthenticated(true);
+   setLoading(false);
+      queryClient.setQueryData(['auth-user'], userData);
+      toast("Account created!", {
+        description: "Welcome to CourseMaster!",
+      });
+    } catch (err: any) {
+      setError(err);
+      toast("Registration failed", {
+        description: err?.response?.data?.message ?? err.message,
+        style: { background: "red", color: "white" },
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const logout = () => {
+  // Login
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/auth`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      const userData = res.data.data;
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      queryClient.setQueryData(['auth-user'], userData);
+      toast("Welcome back!", { description: "Login successful." });
+    } catch (err) {
+      toast("Login failed", { description: "Invalid credentials" });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout
+  const logout = async () => {
+    await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/auth/logout`,
+      {},
+      { withCredentials: true }
+    );
     setUser(null);
-    localStorage.removeItem('coursemaster_user');
+    setIsAuthenticated(false);
+    queryClient.setQueryData(['auth-user'], null);
+    toast("Logged out");
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      login,
+      register,
+      logout,
+      loading,
+      isAuthenticated,
+      setUser,
+      error,
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -99,8 +150,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error("useAuth must be used inside AuthProvider");
   return context;
 }

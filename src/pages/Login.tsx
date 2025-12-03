@@ -25,22 +25,9 @@ export default function Login() {
     setIsLoading(true);
 
     const result = await login(email, password);
-    
-    if (result.success) {
-      toast({
-        title: 'Welcome back!',
-        description: 'You have successfully logged in.',
-      });
-      navigate(from);
-    } else {
-      toast({
-        title: 'Login failed',
-        description: result.error,
-        variant: 'destructive',
-      });
-    }
-    
-    setIsLoading(false);
+   
+      navigate('/');
+   
   };
 
   return (

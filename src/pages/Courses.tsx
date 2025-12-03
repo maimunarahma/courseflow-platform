@@ -98,7 +98,7 @@ export default function Courses() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="container py-8 md:py-12">
         {/* Header */}
         <div className="mb-8">
@@ -160,6 +160,6 @@ export default function Courses() {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 }

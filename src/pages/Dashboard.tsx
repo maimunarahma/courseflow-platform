@@ -30,7 +30,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="container py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -169,6 +169,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

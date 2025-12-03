@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Layout } from '@/components/layout/Layout';
 import { CourseCard } from '@/components/courses/CourseCard';
 import { mockCourses } from '@/data/mockData';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { ReactNode } from 'react';
 
 const stats = [
   { icon: Users, value: '50K+', label: 'Active Students' },
@@ -21,12 +24,13 @@ const features = [
   'Money-back guarantee',
 ];
 
+
 export default function Index() {
   const featuredCourses = mockCourses.slice(0, 3);
 
   return (
-    <Layout>
-      {/* Hero Section */}
+   
+     <>
       <section className="relative overflow-hidden gradient-hero">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(250_84%_54%/0.15),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(172_66%_50%/0.1),transparent_50%)]" />
@@ -206,6 +210,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-    </Layout>
+   </>
   );
 }

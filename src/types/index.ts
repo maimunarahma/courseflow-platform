@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface Course {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   instructor: string;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  LayoutDashboard, BookOpen, Users, FileText, Plus, Edit, Trash2, 
+import {
+  LayoutDashboard, BookOpen, Users, FileText, Plus, Edit, Trash2,
   Search, MoreHorizontal, Eye
 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
@@ -16,26 +16,42 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockCourses, mockEnrollments, mockAssignments, mockBatches } from '@/data/mockData';
+import { mockEnrollments, mockAssignments, mockBatches } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { useCourses } from '@/hooks/use-courses';
+import EditCourseModal from './EditModal';
 
 export default function Admin() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
+  const { courses, deleteCourse } = useCourses();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
+  const handleModal = (course: any) => {
+    setSelectedCourse(course);
+    setIsOpen(true);
+  };
   const stats = [
-    { label: 'Total Courses', value: mockCourses.length, icon: BookOpen },
+    { label: 'Total Courses', value: courses.length, icon: BookOpen },
     { label: 'Total Enrollments', value: mockEnrollments.length, icon: Users },
     { label: 'Active Batches', value: mockBatches.length, icon: LayoutDashboard },
     { label: 'Submissions', value: mockAssignments.reduce((a, b) => a + b.submissions.length, 0), icon: FileText },
   ];
 
   const handleDelete = (id: string) => {
-    toast({ title: 'Course deleted', description: 'Course has been removed.' });
+    try {
+      deleteCourse(id);
+      toast({ title: 'Course deleted', description: 'Course has been removed.' });
+    } catch (error) {
+      toast({ title: 'Course deletion failed', description: ' course has not removed ' });
+    }
   };
 
+
+
   return (
-    <Layout>
+    <>
       <div className="container py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -43,8 +59,10 @@ export default function Admin() {
             <p className="text-muted-foreground">Manage courses, enrollments, and submissions</p>
           </div>
           <Button className="gradient-primary">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Course
+            <Link to="/add-course" className="flex items-center">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Course
+            </Link>
           </Button>
         </div>
 
@@ -95,8 +113,8 @@ export default function Admin() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockCourses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase())).map((course) => (
-                      <TableRow key={course.id}>
+                    {courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase())).map((course) => (
+                      <TableRow key={course._id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <img src={course.thumbnail} alt="" className="h-10 w-16 rounded object-cover" />
@@ -106,10 +124,10 @@ export default function Admin() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell><Badge variant="outline">{course.category}</Badge></TableCell>
-                        <TableCell>${course.price}</TableCell>
-                        <TableCell>{course.enrolledCount.toLocaleString()}</TableCell>
-                        <TableCell>{course.rating}</TableCell>
+                        <TableCell><Badge variant="outline">{course?.category}</Badge></TableCell>
+                        <TableCell>${course?.price}</TableCell>
+                        <TableCell>{course?.enrolledCount}</TableCell>
+                        <TableCell>{course?.rating}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -117,8 +135,14 @@ export default function Admin() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem><Eye className="h-4 w-4 mr-2" />View</DropdownMenuItem>
-                              <DropdownMenuItem><Edit className="h-4 w-4 mr-2" />Edit</DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(course.id)}><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleModal(course)} >
+                                <EditCourseModal
+                                  isOpen={isOpen}
+                                  onClose={() => setIsOpen(false)}
+                                  course={selectedCourse}
+                                />Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(course._id)}><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -145,7 +169,7 @@ export default function Admin() {
                   </TableHeader>
                   <TableBody>
                     {mockEnrollments.map((enrollment) => {
-                      const course = mockCourses.find(c => c.id === enrollment.courseId);
+                      const course = courses.find(c => c._id === enrollment.courseId);
                       return (
                         <TableRow key={enrollment.id}>
                           <TableCell>Student {enrollment.userId}</TableCell>
@@ -192,6 +216,6 @@ export default function Admin() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </>
   );
 }

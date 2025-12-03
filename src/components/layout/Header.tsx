@@ -14,7 +14,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
 export function Header() {
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated,  logout } = useAuth();
+  console.log(user )
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,12 +93,12 @@ export function Header() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to={isAdmin ? '/admin' : '/dashboard'} className="cursor-pointer">
+                  <Link to={ '/dashboard'} className="cursor-pointer">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
-                {isAdmin && (
+                {isAuthenticated && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin" className="cursor-pointer">
                       <Shield className="mr-2 h-4 w-4" />
