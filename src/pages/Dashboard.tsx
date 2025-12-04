@@ -6,24 +6,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockCourses, mockEnrollments } from '@/data/mockData';
+
+import { useEnrollments } from '@/hooks/use-enroll';
+import { useCourses } from '@/hooks/use-courses';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  
-  // Get user's enrolled courses
-  const userEnrollments = mockEnrollments.filter((e) => e.userId === user?.id);
-  const enrolledCourses = userEnrollments.map((enrollment) => {
-    const course = mockCourses.find((c) => c.id === enrollment.courseId);
-    return { ...course, enrollment };
-  }).filter(Boolean);
+  const {courses} = useCourses();
+  const { enrollments } = useEnrollments();
+  console.log(enrollments)
+ 
 
-  const totalProgress = enrolledCourses.length > 0
-    ? Math.round(enrolledCourses.reduce((acc, c) => acc + (c.enrollment?.progress || 0), 0) / enrolledCourses.length)
+  const totalProgress = enrollments.length > 0
+    ? Math.round(enrollments.reduce((acc, c) => acc + (c?.enrollments?.progress || 0), 0) / enrollments.length)
     : 0;
 
   const stats = [
-    { label: 'Courses Enrolled', value: enrolledCourses.length, icon: BookOpen, color: 'text-primary' },
+    { label: 'Courses Enrolled', value: enrollments.length, icon: BookOpen, color: 'text-primary' },
     { label: 'Hours Learned', value: '24', icon: Clock, color: 'text-accent' },
     { label: 'Certificates', value: '1', icon: Award, color: 'text-warning' },
     { label: 'Average Progress', value: `${totalProgress}%`, icon: TrendingUp, color: 'text-success' },
@@ -71,15 +70,15 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          {enrolledCourses.length > 0 ? (
+          {enrollments.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {enrolledCourses.map((item) => {
+              {enrollments.map((item) => {
                 const course = item;
-                const enrollment = item.enrollment;
+                const enrollment = item.enrollments;
                 if (!course) return null;
 
                 return (
-                  <Card key={course.id} className="overflow-hidden group">
+                  <Card key={course._id} className="overflow-hidden group">
                     <div className="relative">
                       <img
                         src={course.thumbnail}
@@ -87,14 +86,14 @@ export default function Dashboard() {
                         className="w-full h-40 object-cover"
                       />
                       <Link
-                        to={`/learn/${course.id}`}
+                        to={`/learn/${course._id}`}
                         className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                       >
                         <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center">
                           <Play className="h-6 w-6 text-primary-foreground ml-1" />
                         </div>
                       </Link>
-                    </div>
+                    </div> 
                     <CardContent className="p-5">
                       <h3 className="font-semibold mb-2 line-clamp-2">{course.title}</h3>
                       
@@ -117,7 +116,7 @@ export default function Dashboard() {
                       </div>
 
                       <Button asChild className="w-full mt-4" variant="secondary">
-                        <Link to={`/learn/${course.id}`}>
+                        <Link to={`/learn/${course._id}`}>
                           Continue Learning
                         </Link>
                       </Button>
@@ -144,11 +143,11 @@ export default function Dashboard() {
         <div>
           <h2 className="font-display text-2xl mb-6">Recommended for You</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockCourses
-              .filter((c) => !userEnrollments.some((e) => e.courseId === c.id))
+            {courses
+              .filter((c) => !enrollments.some((e) => e._id === c._id))
               .slice(0, 3)
               .map((course) => (
-                <Card key={course.id} className="overflow-hidden hover:shadow-card transition-shadow">
+                <Card key={course._id} className="overflow-hidden hover:shadow-card transition-shadow">
                   <img
                     src={course.thumbnail}
                     alt={course.title}
@@ -160,7 +159,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                       <span className="font-display font-bold text-lg">${course.price}</span>
                       <Button asChild size="sm">
-                        <Link to={`/courses/${course.id}`}>View Course</Link>
+                        <Link to={`/courses/${course._id}`}>View Course</Link>
                       </Button>
                     </div>
                   </CardContent>

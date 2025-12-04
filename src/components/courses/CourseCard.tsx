@@ -15,7 +15,7 @@ export function CourseCard({ course }: CourseCardProps) {
     : 0;
 
   return (
-    <Link to={`/courses/${course.id}`}>
+    <Link to={`/courses/${course._id}`}>
       <Card className="group overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-elevated transition-all duration-300 h-full">
         <div className="relative overflow-hidden">
           <img
@@ -50,7 +50,7 @@ export function CourseCard({ course }: CourseCardProps) {
           <div className="flex items-center gap-2 mb-4">
             <Avatar className="h-6 w-6">
               <AvatarImage src={course.instructorAvatar} />
-              <AvatarFallback className="text-xs">{course.instructor.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="text-xs">{course?.instructor.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-sm text-muted-foreground">{course.instructor}</span>
           </div>
@@ -64,9 +64,9 @@ export function CourseCard({ course }: CourseCardProps) {
               <BookOpen className="h-3.5 w-3.5" />
               {course.lessonsCount} lessons
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap- 1">
               <Users className="h-3.5 w-3.5" />
-              {course.enrolledCount.toLocaleString()}
+              {course.enrolledCount}
             </span>
           </div>
 
@@ -75,7 +75,7 @@ export function CourseCard({ course }: CourseCardProps) {
               <Star className="h-4 w-4 fill-warning text-warning" />
               <span className="font-semibold">{course.rating}</span>
               <span className="text-xs text-muted-foreground">
-                ({course.reviewsCount.toLocaleString()})
+                ({course.reviewsCount})
               </span>
             </div>
             <div className="flex items-center gap-2">

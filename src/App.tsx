@@ -22,6 +22,7 @@ import { Layout } from "./components/layout/Layout";
 import { CourseProvider } from "./hooks/use-courses";
 import AddCourse from "./pages/AddCourse";
 import EditCourseModal from "./pages/EditModal";
+import { EnrollmentProvider } from "./hooks/use-enroll";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
        <CourseProvider>
+        <EnrollmentProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -54,7 +56,9 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </EnrollmentProvider>
       </CourseProvider>
+      
     </AuthProvider>
   </QueryClientProvider>
 );

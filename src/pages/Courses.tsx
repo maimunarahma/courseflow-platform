@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Layout } from '@/components/layout/Layout';
+import { useSearchParams } from 'react-router-dom'; 
 import { CourseCard } from '@/components/courses/CourseCard';
 import { CourseFilters } from '@/components/courses/CourseFilters';
 import { CoursePagination } from '@/components/courses/CoursePagination';
-import { mockCourses } from '@/data/mockData';
+import { useCourses } from '@/hooks/use-courses';
 
 const COURSES_PER_PAGE = 6;
 
@@ -17,6 +16,7 @@ export default function Courses() {
   const [sortBy, setSortBy] = useState('popular');
   const [currentPage, setCurrentPage] = useState(1);
 
+  const {courses} =useCourses();
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
@@ -27,12 +27,12 @@ export default function Courses() {
 
   // Filter and sort courses
   const filteredCourses = useMemo(() => {
-    let courses = [...mockCourses];
+    let allCourses = [...courses];
 
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      courses = courses.filter(
+      allCourses = courses.filter(
         (c) =>
           c.title.toLowerCase().includes(query) ||
           c.instructor.toLowerCase().includes(query) ||
@@ -42,34 +42,34 @@ export default function Courses() {
 
     // Category filter
     if (selectedCategory !== 'All Categories') {
-      courses = courses.filter((c) => c.category === selectedCategory);
+      allCourses = courses.filter((c) => c.category === selectedCategory);
     }
 
     // Level filter
     if (selectedLevel !== 'All Levels') {
-      courses = courses.filter((c) => c.level === selectedLevel);
+      allCourses = courses.filter((c) => c.level === selectedLevel);
     }
 
     // Sorting
     switch (sortBy) {
       case 'newest':
-        courses.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        allCourses.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
       case 'popular':
-        courses.sort((a, b) => b.enrolledCount - a.enrolledCount);
+        allCourses.sort((a, b) => b.enrolledCount - a.enrolledCount);
         break;
       case 'rating':
-        courses.sort((a, b) => b.rating - a.rating);
+        allCourses.sort((a, b) => b.rating - a.rating);
         break;
       case 'price-low':
-        courses.sort((a, b) => a.price - b.price);
+        allCourses.sort((a, b) => a.price - b.price);
         break;
       case 'price-high':
-        courses.sort((a, b) => b.price - a.price);
+        allCourses.sort((a, b) => b.price - a.price);
         break;
     }
 
-    return courses;
+    return allCourses;
   }, [searchQuery, selectedCategory, selectedLevel, sortBy]);
 
   // Pagination
@@ -104,7 +104,7 @@ export default function Courses() {
         <div className="mb-8">
           <h1 className="font-display text-3xl md:text-4xl mb-2">Explore Courses</h1>
           <p className="text-muted-foreground">
-            Discover {mockCourses.length}+ courses from expert instructors
+            Discover {courses.length}+ courses from expert instructors
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function Courses() {
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedCourses.map((course, index) => (
-                <div key={course.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-fade-in">
+                <div key={course._id} style={{ animationDelay: `${index * 50}ms` }} className="animate-fade-in">
                   <CourseCard course={course} />
                 </div>
               ))}

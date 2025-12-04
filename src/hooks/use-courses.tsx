@@ -22,6 +22,7 @@ interface CourseContextType {
   isLoading: boolean;
   isError: boolean;
   addCourse: (courseData: Partial<Course>) => Promise<void>;
+  getCourseById: (id: string) => Promise<Course>;
   updateCourse: (id: string, courseData: Partial<Course>) => Promise<void>;
   deleteCourse: (id: string) => Promise<void>;
   refetchCourses: () => void;
@@ -61,6 +62,15 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
       toast('Failed to add course', { description: err?.response?.data?.message || err.message });
     },
   });
+  //  get single course by id
+  const getCourseById = async (id: string) => {
+    const res = await axios.get( 
+      `${import.meta.env.VITE_SERVER_URL}/courses/${id}`,
+      { withCredentials: true }
+    );
+    return res.data;
+  };
+
 
   // Update course
   const updateMutation = useMutation({
@@ -111,6 +121,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         isError,
         addCourse,
+        getCourseById,
         updateCourse,
         deleteCourse,
         refetchCourses: refetch,

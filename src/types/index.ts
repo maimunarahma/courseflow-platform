@@ -16,6 +16,7 @@ export interface Course {
   price: number;
   originalPrice?: number;
   thumbnail: string;
+  curriculum: Module[];
   category: string;
   tags: string[];
   duration: string;
