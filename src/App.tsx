@@ -46,7 +46,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/edit-modal" element={<EditCourseModal />} />
+              {/* EditCourseModal is used as a component in Admin page, not a route */}
               <Route path="/learn/:id" element={<Learn />} />
               <Route path="/quiz/:courseId/:quizId" element={<Quiz />} />
               <Route path="/assignment/:id" element={<Assignment />} />

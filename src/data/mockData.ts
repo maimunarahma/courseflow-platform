@@ -21,7 +21,7 @@ export const mockUsers: User[] = [
 
 export const mockCourses: Course[] = [
   {
-    id: 'course-1',
+    _id: 'course-1',
     title: 'Complete React Development Bootcamp',
     description: 'Master React from scratch. Learn hooks, context, Redux, and build real-world projects. This comprehensive course covers everything you need to become a professional React developer.',
     instructor: 'Alex Johnson',
@@ -76,7 +76,7 @@ export const mockCourses: Course[] = [
     updatedAt: '2024-11-15T00:00:00Z',
   },
   {
-    id: 'course-2',
+    _id: 'course-2',
     title: 'Node.js & Express Masterclass',
     description: 'Build scalable backend applications with Node.js and Express. Learn REST APIs, authentication, databases, and deployment strategies.',
     instructor: 'Emily Chen',
@@ -117,7 +117,7 @@ export const mockCourses: Course[] = [
     updatedAt: '2024-11-10T00:00:00Z',
   },
   {
-    id: 'course-3',
+    _id: 'course-3',
     title: 'Python for Data Science',
     description: 'Learn Python programming for data analysis, visualization, and machine learning. Work with pandas, NumPy, matplotlib, and scikit-learn.',
     instructor: 'Dr. Michael Smith',
@@ -149,7 +149,7 @@ export const mockCourses: Course[] = [
     updatedAt: '2024-11-20T00:00:00Z',
   },
   {
-    id: 'course-4',
+    _id: 'course-4',
     title: 'UI/UX Design Fundamentals',
     description: 'Master the principles of user interface and user experience design. Learn Figma, prototyping, user research, and design systems.',
     instructor: 'Lisa Park',
@@ -180,7 +180,7 @@ export const mockCourses: Course[] = [
     updatedAt: '2024-11-01T00:00:00Z',
   },
   {
-    id: 'course-5',
+    _id: 'course-5',
     title: 'AWS Cloud Practitioner',
     description: 'Prepare for AWS certification. Learn cloud computing concepts, AWS services, security, pricing, and architecture best practices.',
     instructor: 'James Wilson',
@@ -212,7 +212,7 @@ export const mockCourses: Course[] = [
     updatedAt: '2024-10-28T00:00:00Z',
   },
   {
-    id: 'course-6',
+    _id: 'course-6',
     title: 'Full-Stack TypeScript',
     description: 'Build end-to-end applications with TypeScript. Cover React, Node.js, PostgreSQL, and deploy to production.',
     instructor: 'Alex Johnson',

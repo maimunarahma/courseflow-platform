@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useEnrollments } from '@/hooks/use-enroll';
+import { useCourses } from '@/hooks/use-courses';
 
 // Placeholder for saving progress (Replace with your actual useMutation hook)
 const useSaveProgressMutation = () => {
@@ -29,37 +30,45 @@ export default function Learn() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { enrollments, refetchEnrollments } = useEnrollments();
+  const { courses } = useCourses();
   const { mutate: saveProgress } = useSaveProgressMutation();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
-
-  // 1. CRITICAL FIX: Find the specific course/enrollment object by its ID
+  // Get the course data from courses
   const course = useMemo(() => {
-    if (!enrollments) return null;
-    // CORRECT: Search the enrollments array for the element whose _id matches the URL courseId
-    return enrollments.find((e: any) => e._id === courseId);
-  }, [enrollments, courseId]); // Added courseId to dependency array
+    if (!courses) return null;
+    return courses.find((c) => c._id === courseId);
+  }, [courses, courseId]);
 
-  // 2. CRITICAL FIX: Flatten lessons ONLY for the currently selected course
-  const allLessons = useMemo(() => {
-    // Ensure course and syllabus exist before flatMap
-    return course?.curriculum?.flatMap((mod: any) => mod.lessons) || [];
+  // Get the enrollment data
+  const enrollment = useMemo(() => {
+    if (!enrollments) return null;
+    return enrollments.find((e: any) => e.courseId === courseId || e._id === courseId);
+  }, [enrollments, courseId]);
+
+  // Get syllabus from course
+  const syllabus = useMemo(() => {
+    return course?.syllabus || course?.curriculum || [];
   }, [course]);
 
+  // Flatten lessons from syllabus
+  const allLessons = useMemo(() => {
+    return syllabus.flatMap((mod) => mod.lessons) || [];
+  }, [syllabus]);
 
-  // 3. State Initialization and Synchronization
+  // State Initialization and Synchronization
   useEffect(() => {
     if (course && courseId) {
-      // CRITICAL FIX: Initialize state from the course object's lessonCompleted field
-      const initialCompleted = course.lessonCompleted || [];
+      // Initialize completed lessons from enrollment data or empty array
+      const initialCompleted = (enrollment as any)?.completedLessons || [];
       setCompletedLessons(initialCompleted);
 
       // Set first uncompleted lesson as current, or the very first lesson
       if (allLessons.length > 0) {
-        const firstUncompleted = allLessons.find((l: any) => !initialCompleted.includes(l.id));
+        const firstUncompleted = allLessons.find((l) => !initialCompleted.includes(l.id));
         const lessonToSet = firstUncompleted || allLessons[0];
 
         // Only set if a lesson hasn't been manually selected yet
@@ -68,22 +77,21 @@ export default function Learn() {
         }
       }
     }
-  }, [course, allLessons, currentLessonId, courseId]);
+  }, [course, enrollment, allLessons, currentLessonId, courseId]);
 
 
   // Handle initial loading and error states
-  // Note: If enrollments is an empty array (user enrolled in nothing), course will be null.
-  if (!enrollments) {
+  if (!courses || courses.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">Loading Course Data...</div>;
   }
 
-  // Handle course not found/not enrolled
+  // Handle course not found
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="font-display text-2xl mb-4">Course not found or not enrolled</h1>
-          <p className="text-muted-foreground mb-4">Enroll in this course to start learning.</p>
+          <h1 className="font-display text-2xl mb-4">Course not found</h1>
+          <p className="text-muted-foreground mb-4">This course doesn't exist or you need to enroll first.</p>
           <Button asChild>
             <Link to="/courses">Browse Courses</Link>
           </Button>
@@ -93,8 +101,8 @@ export default function Learn() {
   }
 
   // Navigation Logic
-  const currentLesson = allLessons.find((l: any) => l.id === currentLessonId);
-  const currentLessonIndex = allLessons.findIndex((l: any) => l.id === currentLessonId);
+  const currentLesson = allLessons.find((l) => l.id === currentLessonId);
+  const currentLessonIndex = allLessons.findIndex((l) => l.id === currentLessonId);
   const prevLesson = currentLessonIndex > 0 ? allLessons[currentLessonIndex - 1] : null;
   const nextLesson = currentLessonIndex < allLessons.length - 1 ? allLessons[currentLessonIndex + 1] : null;
 
@@ -175,7 +183,7 @@ export default function Learn() {
           {/* Course Content */}
           <ScrollArea className="flex-1">
             <div className="p-4 space-y-4">
-              {course.curriculum.map((module: any, moduleIndex: number) => (
+              {syllabus.map((module, moduleIndex) => (
                 <div key={module.id}>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">

@@ -16,18 +16,18 @@ export interface Course {
   price: number;
   originalPrice?: number;
   thumbnail: string;
-  curriculum: Module[];
+  curriculum?: Module[];
   category: string;
-  tags: string[];
-  duration: string;
-  lessonsCount: number;
+  tags?: string[];
+  duration?: string;
+  lessonsCount?: number;
   enrolledCount: number;
   rating: number;
-  reviewsCount: number;
-  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  reviewsCount?: number;
+  level?: 'Beginner' | 'Intermediate' | 'Advanced';
   syllabus: Module[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Module {
