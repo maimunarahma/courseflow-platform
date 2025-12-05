@@ -32,45 +32,45 @@ export default function Courses() {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      allCourses = courses.filter(
+      allCourses = allCourses.filter(
         (c) =>
           c.title.toLowerCase().includes(query) ||
           c.instructor.toLowerCase().includes(query) ||
-          c.tags.some((tag) => tag.toLowerCase().includes(query))
+          (c.tags && c.tags.some((tag) => tag.toLowerCase().includes(query)))
       );
     }
 
     // Category filter
     if (selectedCategory !== 'All Categories') {
-      allCourses = courses.filter((c) => c.category === selectedCategory);
+      allCourses = allCourses.filter((c) => c.category === selectedCategory);
     }
 
     // Level filter
     if (selectedLevel !== 'All Levels') {
-      allCourses = courses.filter((c) => c.level === selectedLevel);
+      allCourses = allCourses.filter((c) => c.level === selectedLevel);
     }
 
     // Sorting
     switch (sortBy) {
       case 'newest':
-        allCourses.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        allCourses.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
         break;
       case 'popular':
-        allCourses.sort((a, b) => b.enrolledCount - a.enrolledCount);
+        allCourses.sort((a, b) => (b.enrolledCount || 0) - (a.enrolledCount || 0));
         break;
       case 'rating':
-        allCourses.sort((a, b) => b.rating - a.rating);
+        allCourses.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'price-low':
-        allCourses.sort((a, b) => a.price - b.price);
+        allCourses.sort((a, b) => (a.price || 0) - (b.price || 0));
         break;
       case 'price-high':
-        allCourses.sort((a, b) => b.price - a.price);
+        allCourses.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
     }
 
     return allCourses;
-  }, [searchQuery, selectedCategory, selectedLevel, sortBy]);
+  }, [courses, searchQuery, selectedCategory, selectedLevel, sortBy]);
 
   // Pagination
   const totalPages = Math.ceil(filteredCourses.length / COURSES_PER_PAGE);

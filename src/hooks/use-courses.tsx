@@ -2,27 +2,17 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { Course as MockCourse } from '@/types';
+import { mockCourses } from '@/data/mockData';
 
-export interface Course {
-  rating: ReactNode;
-  enrolledCount: any;
-  _id: string;
-  title: string;
-  description?: string;
-  instructor: string;
-  category?: string;
-  price?: number;
-  thumbnail?: string;
-  lessons?: string[];
-  batch?: string;
-}
+export type Course = MockCourse;
 
 interface CourseContextType {
   courses: Course[];
   isLoading: boolean;
   isError: boolean;
   addCourse: (courseData: Partial<Course>) => Promise<void>;
-  getCourseById: (id: string) => Promise<Course>;
+  getCourseById: (id: string) => Promise<Course | undefined>;
   updateCourse: (id: string, courseData: Partial<Course>) => Promise<void>;
   deleteCourse: (id: string) => Promise<void>;
   refetchCourses: () => void;
@@ -33,14 +23,19 @@ const CourseContext = createContext<CourseContextType | undefined>(undefined);
 export const CourseProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
-  // Fetch all courses
-  const { data: courses = [], isLoading, isError, refetch } = useQuery<Course[]>({
+  // Fetch all courses - falls back to mock data if API fails
+  const { data: courses = mockCourses, isLoading, isError, refetch } = useQuery<Course[]>({
     queryKey: ['courses'],
     queryFn: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/courses`, {
-        withCredentials: true,
-      });
-      return res.data;
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/courses`, {
+          withCredentials: true,
+        });
+        return res.data;
+      } catch {
+        // Fallback to mock data
+        return mockCourses;
+      }
     },
   });
 
@@ -62,15 +57,19 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
       toast('Failed to add course', { description: err?.response?.data?.message || err.message });
     },
   });
-  //  get single course by id
-  const getCourseById = async (id: string) => {
-    const res = await axios.get( 
-      `${import.meta.env.VITE_SERVER_URL}/courses/${id}`,
-      { withCredentials: true }
-    );
-    return res.data;
-  };
 
+  // Get single course by id
+  const getCourseById = async (id: string) => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/courses/${id}`,
+        { withCredentials: true }
+      );
+      return res.data;
+    } catch {
+      return courses.find((c) => c._id === id);
+    }
+  };
 
   // Update course
   const updateMutation = useMutation({
