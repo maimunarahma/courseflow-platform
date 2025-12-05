@@ -149,7 +149,7 @@ export default function Index() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredCourses.map((course, index) => (
-              <div key={course.id} style={{ animationDelay: `${index * 100}ms` }} className="animate-fade-in">
+              <div key={course._id} style={{ animationDelay: `${index * 100}ms` }} className="animate-fade-in">
                 <CourseCard course={course} />
               </div>
             ))}

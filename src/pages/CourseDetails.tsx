@@ -78,7 +78,8 @@ export default function CourseDetails() {
         }
     };
 
-    const totalLessons = course.curriculum.reduce((acc, mod) => acc + mod.lessons.length, 0);
+    const syllabus = course.syllabus || course.curriculum || [];
+    const totalLessons = syllabus.reduce((acc, mod) => acc + mod.lessons.length, 0);
     const discountPercent = course.originalPrice
         ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
         : 0;
@@ -92,9 +93,11 @@ export default function CourseDetails() {
                         <div className="lg:col-span-2 space-y-6">
                             <div className="flex flex-wrap gap-2">
                                 <Badge variant="secondary">{course.category}</Badge>
-                                <Badge variant="outline" className="border-background/30 text-background">
-                                    {course.level}
-                                </Badge>
+                                {course.level && (
+                                  <Badge variant="outline" className="border-background/30 text-background">
+                                      {course.level}
+                                  </Badge>
+                                )}
                             </div>
 
                             <h1 className="font-display text-3xl md:text-4xl lg:text-5xl">{course.title}</h1>
@@ -104,7 +107,7 @@ export default function CourseDetails() {
                                 <div className="flex items-center gap-1">
                                     <Star className="h-5 w-5 fill-warning text-warning" />
                                     <span className="font-semibold">{course.rating}</span>
-                                    <span className="text-background/60">({course.reviewsCount.toLocaleString()} reviews)</span>
+                                    <span className="text-background/60">({(course.reviewsCount || 0).toLocaleString()} reviews)</span>
                                 </div>
                                 <span className="flex items-center gap-1 text-background/60">
                                     <Users className="h-4 w-4" /> {course.enrolledCount.toLocaleString()} students
@@ -116,8 +119,8 @@ export default function CourseDetails() {
 
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-12 w-12">
-                                    <AvatarImage src={course.instructorAvatar} />
-                                    <AvatarFallback>{course.instructor.charAt(0)}</AvatarFallback>
+                                    <AvatarImage src={course.instructorAvatar || ''} />
+                                    <AvatarFallback>{course.instructor?.charAt(0) || 'I'}</AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <p className="font-medium">Created by</p>
@@ -132,8 +135,8 @@ export default function CourseDetails() {
                                 <img src={course.thumbnail} alt={course.title} className="w-full h-48 object-cover" />
                                 <div className="p-6 space-y-6">
                                     <div className="flex items-center gap-3">
-                                        <span className="font-display text-3xl font-bold">${course.price}</span>
-                                        {course.originalPrice && (
+                                        <span className="font-display text-3xl font-bold">${course.price || 0}</span>
+                                        {course.originalPrice && course.originalPrice > (course.price || 0) && (
                                             <>
                                                 <span className="text-lg text-muted-foreground line-through">${course.originalPrice}</span>
                                                 <Badge className="bg-destructive text-destructive-foreground">{discountPercent}% OFF</Badge>
@@ -148,7 +151,7 @@ export default function CourseDetails() {
                                     <div className="space-y-3 text-sm">
                                         <div className="flex items-center gap-3">
                                             <Clock className="h-4 w-4 text-muted-foreground" />
-                                            <span>{course.duration} of content</span>
+                                            <span>{course.duration || 'Self-paced'} of content</span>
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -176,11 +179,11 @@ export default function CourseDetails() {
                     <div className="lg:max-w-2xl">
                         <h2 className="font-display text-2xl md:text-3xl mb-6">Course Content</h2>
                         <p className="text-muted-foreground mb-8">
-                            {course.curriculum.length} modules • {totalLessons} lessons • {course.duration} total length
+                            {syllabus.length} modules • {totalLessons} lessons • {course.duration || 'Self-paced'} total length
                         </p>
 
                         <Accordion type="multiple" defaultValue={['mod1']} className="space-y-4">
-                            {course.curriculum.map((module, moduleIndex) => (
+                            {syllabus.map((module, moduleIndex) => (
                                 <AccordionItem key={module.id} value={module.id} className="border border-border rounded-lg px-4">
                                     <AccordionTrigger className="hover:no-underline py-4">
                                         <div className="flex items-center gap-4 text-left">

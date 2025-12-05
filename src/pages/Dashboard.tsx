@@ -18,7 +18,7 @@ export default function Dashboard() {
  
 
   const totalProgress = enrollments.length > 0
-    ? Math.round(enrollments.reduce((acc, c) => acc + (c?.enrollments?.progress || 0), 0) / enrollments.length)
+    ? Math.round(enrollments.reduce((acc, c: any) => acc + (c?.progress || 0), 0) / enrollments.length)
     : 0;
 
   const stats = [
@@ -72,21 +72,21 @@ export default function Dashboard() {
 
           {enrollments.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {enrollments.map((item) => {
-                const course = item;
-                const enrollment = item.enrollments;
-                if (!course) return null;
+              {enrollments.map((item: any) => {
+                const courseData = item.course || item;
+                const progress = item.progress || 0;
+                if (!courseData) return null;
 
                 return (
-                  <Card key={course._id} className="overflow-hidden group">
+                  <Card key={courseData._id} className="overflow-hidden group">
                     <div className="relative">
                       <img
-                        src={course.thumbnail}
-                        alt={course.title}
+                        src={courseData.thumbnail || '/placeholder.svg'}
+                        alt={courseData.title || 'Course'}
                         className="w-full h-40 object-cover"
                       />
                       <Link
-                        to={`/learn/${course._id}`}
+                        to={`/learn/${courseData._id}`}
                         className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                       >
                         <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center">
@@ -95,28 +95,28 @@ export default function Dashboard() {
                       </Link>
                     </div> 
                     <CardContent className="p-5">
-                      <h3 className="font-semibold mb-2 line-clamp-2">{course.title}</h3>
+                      <h3 className="font-semibold mb-2 line-clamp-2">{courseData.title}</h3>
                       
                       <div className="flex items-center gap-2 mb-4">
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src={course.instructorAvatar} />
+                          <AvatarImage src={courseData.instructorAvatar || ''} />
                           <AvatarFallback className="text-xs">
-                            {course.instructor?.charAt(0)}
+                            {courseData.instructor?.charAt(0) || 'I'}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="text-sm text-muted-foreground">{course.instructor}</span>
+                        <span className="text-sm text-muted-foreground">{courseData.instructor}</span>
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Progress</span>
-                          <span className="font-medium">{enrollment?.progress}%</span>
+                          <span className="font-medium">{progress}%</span>
                         </div>
-                        <Progress value={enrollment?.progress} className="h-2" />
+                        <Progress value={progress} className="h-2" />
                       </div>
 
                       <Button asChild className="w-full mt-4" variant="secondary">
-                        <Link to={`/learn/${course._id}`}>
+                        <Link to={`/learn/${courseData._id}`}>
                           Continue Learning
                         </Link>
                       </Button>

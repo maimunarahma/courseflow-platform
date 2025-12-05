@@ -148,9 +148,9 @@ export default function Quiz() {
                   <RotateCcw className="h-4 w-4 mr-2" />
                   Retry Quiz
                 </Button>
-                {course && (
+              {course && (
                   <Button className="flex-1 gradient-primary" asChild>
-                    <Link to={`/learn/${course.id}`}>Continue Course</Link>
+                    <Link to={`/learn/${course._id}`}>Continue Course</Link>
                   </Button>
                 )}
               </div>
@@ -168,7 +168,7 @@ export default function Quiz() {
         <div className="mb-8">
           {course && (
             <Link
-              to={`/learn/${course.id}`}
+              to={`/learn/${course._id}`}
               className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
