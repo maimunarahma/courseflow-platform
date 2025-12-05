@@ -141,17 +141,9 @@ console.log("Quizzes from hook:", quizzes);
                   <RotateCcw className="h-4 w-4 mr-2" />
                   Retry Quiz
                 </Button>
-<<<<<<< HEAD
                 <Button className="flex-1 gradient-primary" asChild>
                   <Link to={`/learn/${courseId}`}>Continue Course</Link>
                 </Button>
-=======
-              {course && (
-                  <Button className="flex-1 gradient-primary" asChild>
-                    <Link to={`/learn/${course._id}`}>Continue Course</Link>
-                  </Button>
-                )}
->>>>>>> 5d58321f04000c481a196011cdba6d4c4fc29d8f
               </div>
             </CardContent>
           </Card>
@@ -165,7 +157,6 @@ console.log("Quizzes from hook:", quizzes);
       <div className="max-w-2xl mx-auto py-8">
         {/* Header */}
         <div className="mb-8">
-<<<<<<< HEAD
           <Link
             to={`/learn/${courseId}`}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -173,17 +164,6 @@ console.log("Quizzes from hook:", quizzes);
             <ChevronLeft className="h-4 w-4 mr-1" />
             Back to Course
           </Link>
-=======
-          {course && (
-            <Link
-              to={`/learn/${course._id}`}
-              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Back to Course
-            </Link>
-          )}
->>>>>>> 5d58321f04000c481a196011cdba6d4c4fc29d8f
           <h1 className="font-display text-2xl mb-2">{quiz.title}</h1>
           <div className="flex items-center gap-4">
             <Progress value={progress} className="flex-1 h-2" />
