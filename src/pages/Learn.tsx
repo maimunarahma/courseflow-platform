@@ -214,7 +214,7 @@ export default function Learn() {
 
                     {module.quizId && (
                       <Link
-                        to={`/quiz/${module.quizId}`}
+                        to={`/quiz/${course._id}/${module.quizId}`}
                         className="w-full flex items-center gap-2 p-2 rounded-lg text-left text-sm hover:bg-secondary transition-colors"
                       >
                         <Award className="h-4 w-4 text-warning flex-shrink-0" />
