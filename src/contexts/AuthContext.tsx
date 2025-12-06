@@ -38,16 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Load logged in user
   useEffect(() => {
     const fetchUser = async () => {
+      setLoading(true)
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/user/me`,
           {  withCredentials: true }
         );
 
-        const userData = res.data?.data;
+        const userData = res.data?.user;
 
-        setUser(userData || null);
-        setIsAuthenticated(!!userData);
+        setUser(userData );
+        setIsAuthenticated(true);
 
         queryClient.setQueryData(['auth-user'], userData || null);
       } catch {
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         { withCredentials: true }
       );
 
-      const userData = res.data.data;
+      const userData = res.data?.user;
       setUser(userData);
       setIsAuthenticated(true);
    setLoading(false);
@@ -105,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         { withCredentials: true }
       );
 
-      const userData = res.data.data;
+      const userData = res.data?.user;
       setUser(userData);
       setIsAuthenticated(true);
 
