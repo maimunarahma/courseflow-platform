@@ -1,73 +1,196 @@
-# Welcome to your Lovable project
+# CourseMaster – Client (Vite + React + TypeScript)
 
-## Project info
+A production-ready **E-learning platform frontend** built using **Vite + React + TypeScript** with **ShadCN UI**, **React Query**, and **Zod**. This project is part of the full-stack CourseMaster MERN-based system.
 
-**URL**: https://lovable.dev/projects/191cb701-22e1-4de4-91b4-1f9b594f70a1
+This client connects to the CourseMaster backend API (Express + MongoDB) and provides a fast, scalable, and modern UI for Students and Admins.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 Tech Stack
 
-**Use Lovable**
+### **Frontend**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/191cb701-22e1-4de4-91b4-1f9b594f70a1) and start prompting.
+* **React.js + TypeScript**
+* **Vite** (blazing fast dev & build)
+* **React Router DOM** (client-side routing)
+* **ShadCN UI + Radix UI** (production-ready UI components)
+* **React Query (@tanstack/react-query)** for server-state & caching
+* **Axios** (API requests)
+* **Zod** (form validation)
+* **React Hook Form** (form management)
+* **TailwindCSS** (utility-first styling)
+* **Lucide Icons**
+* **Sonner** (toast notifications)
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 📂 Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```
+src/
+  ├── api/               # Axios instances & API methods
+  ├── components/        # Reusable UI components
+  ├── hooks/             # Custom React hooks
+  ├── layouts/           # Layout wrappers
+  ├── pages/             # Public & Protected pages
+  ├── router/            # React Router config
+  ├── store/             # Context API or Redux Toolkit
+  ├── types/             # TypeScript models
+  ├── utils/             # Helper functions
+  ├── main.tsx           # App entry point
+  └── App.tsx            # Global providers
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🔐 Authentication Flow
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### **Features:**
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* JWT Authentication (stored in HttpOnly cookies)
+* Student login/register
+* Admin login (separate route)
+* Protected routes using React Router
+* Auto-refresh user state using React Query
 
-# Step 3: Install the necessary dependencies.
-npm i
+### **Protected Route Example**
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```tsx
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
+
+export default function ProtectedRoute({ children }: { children: JSX.Element }) {
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  return children;
+}
+```
+
+---
+
+## 🎓 Student Features
+
+* Browse all available courses
+* Search, filter, sort, and paginate
+* View course details
+* Enroll in course
+* Watch lessons (YouTube/Vimeo embed)
+* Progress tracking (e.g., 40% completed)
+* Submit assignments (Google Drive link or text)
+* Take quizzes → auto-score
+
+---
+
+## 🛠️ Admin Features
+
+* Create / Read / Update / Delete Courses
+* Manage Batches
+* Track Enrollments
+* Review Student Assignments
+
+---
+
+## 🌐 Environment Variables
+
+Create a `.env` file:
+
+```
+VITE_API_BASE_URL=https://your-server-domain.com/api
+```
+
+Usage:
+
+```ts
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true,
+});
+```
+
+---
+
+## 🚦 Running the Client
+
+### **Install dependencies:**
+
+```bash
+npm install
+```
+
+### **Start development server:**
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### **Build for production:**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+```
 
-**Use GitHub Codespaces**
+### **Preview production build:**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run preview
+```
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📡 API Communication (React Query)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```ts
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/api/axios";
 
-## How can I deploy this project?
+export const useCourses = () => {
+  return useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const res = await api.get("/courses");
+      return res.data;
+    },
+  });
+};
+```
 
-Simply open [Lovable](https://lovable.dev/projects/191cb701-22e1-4de4-91b4-1f9b594f70a1) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🧹 Code Quality
 
-Yes, you can!
+* Zod validation for all forms
+* React Query for caching, deduping, stale state handling
+* Modular folder structure
+* Reusable UI components
+* Meaningful toasts (success/error/loading)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📘 Additional Notes
+
+This is the **client-only repository README** for CourseMaster.
+For backend setup (Express + TypeScript + MongoDB), ensure:
+
+* JWT + cookies are configured
+* CORS allows credentials
+* Secure routes for Students/Admins
+
+---
+
+## 📄 License
+
+MIT License.
+
+---
+
+If you want, I can also generate:
+✅ Backend README
+✅ Full folder scaffolding for your Vite project
+✅ Auth flow code (login, register, refresh)
+✅ Course CRUD UI (ShadCN based)
+
+Just tell me! 🚀
