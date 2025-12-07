@@ -1,6 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-;
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -23,6 +21,8 @@ import AddCourse from "./pages/AddCourse";
 import EditCourseModal from "./pages/EditModal";
 import { EnrollmentProvider } from "./hooks/use-enroll";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { Toaster } from "./components/ui/toaster";
+import { Sonner } from "./components/ui/sonner";
 
 
 const queryClient = new QueryClient();
@@ -33,8 +33,8 @@ const App = () => (
        <CourseProvider>
         <EnrollmentProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
+        <Toaster/>
+        <Sonner/>
         <BrowserRouter>
           <Routes>
             {/* Layout route wraps all pages that need navbar/footer */}
