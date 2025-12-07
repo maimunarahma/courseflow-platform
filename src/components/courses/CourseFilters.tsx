@@ -1,15 +1,18 @@
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+
+import { Button } from '../ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { categories, levels } from '@/data/mockData';
+} from '../ui/select';
+import { Badge } from '../ui/badge';
+
+import { Input } from '../ui/input';
+import {categories, levels } from '@/data/mockData';
+
 
 interface CourseFiltersProps {
   searchQuery: string;
