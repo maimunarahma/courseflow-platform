@@ -16,12 +16,13 @@ import { useState } from 'react';
 export function Header() {
   const { user, isAuthenticated,  logout } = useAuth();
   console.log(user )
-  fetch(`${import.meta.env.VITE_SERVER_URL}/debug/cookies`, { credentials: 'include' })
-  .then(r => {
-    r.json();
-    console.log(r.json())
-    
-  })
+fetch(`${import.meta.env.VITE_SERVER_URL}/debug/cookies`, {
+  credentials: "include"
+})
+  .then(r => r.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
   
   .catch(console.error);
   const navigate = useNavigate();
