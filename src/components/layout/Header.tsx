@@ -23,8 +23,7 @@ fetch(`${import.meta.env.VITE_SERVER_URL}/debug/cookies`, {
   .then(data => console.log(data))
   .catch(err => console.error(err));
 
-  
-  .catch(console.error);
+
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
