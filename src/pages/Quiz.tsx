@@ -14,6 +14,9 @@ export default function Quiz() {
   const navigate = useNavigate();
   const { quizzes, createQuizMutation, isLoading, isError } = useQuizzes(courseId);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [regenerateCount, setRegenerateCount] = useState(0);
+  const [previousQuizIds, setPreviousQuizIds] = useState<string[]>([]);
+  const MAX_REGENERATIONS = 2;
 
   console.log("Quizzes from hook:", quizzes);
   
@@ -193,6 +196,39 @@ console.log(quiz)
     setSubmitted(false);
   };
 
+  const handleRegenerate = () => {
+    if (courseId && !isGenerating && !createQuizMutation.isPending && regenerateCount < MAX_REGENERATIONS) {
+      setIsGenerating(true);
+      setSelectedAnswers([]);
+      setCurrentQuestion(0);
+      setSubmitted(false);
+      
+      // Add current quiz ID to previous list to avoid duplicates
+      if (quiz?._id) {
+        setPreviousQuizIds(prev => [...prev, quiz._id]);
+      }
+      
+      createQuizMutation.mutate(
+        { 
+          course: { _id: courseId },
+          regenerate: true, // Flag to indicate regeneration
+          previousQuizId: quiz?._id // Send current quiz ID to backend
+        },
+        {
+          onSuccess: () => {
+            console.log('Quiz regenerated successfully');
+            setRegenerateCount(prev => prev + 1);
+            setIsGenerating(false);
+          },
+          onError: (error) => {
+            console.error('Failed to regenerate quiz:', error);
+            setIsGenerating(false);
+          }
+        }
+      );
+    }
+  };
+
   if (submitted) {
     const score = calculateScore();
     const percentage = Math.round((score / questions.length) * 100);
@@ -286,6 +322,33 @@ console.log(quiz)
           <div className="flex items-center gap-4">
             <Progress value={progress} className="flex-1 h-2" />
             <span className="text-sm text-muted-foreground">{currentQuestion + 1} / {questions.length}</span>
+          </div>
+          
+          {/* Regenerate Quiz Button */}
+          <div className="mt-4 flex items-center gap-3">
+            <Button
+              onClick={handleRegenerate}
+              disabled={isGenerating || createQuizMutation.isPending || regenerateCount >= MAX_REGENERATIONS}
+              variant="outline"
+              size="sm"
+            >
+              {isGenerating || createQuizMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Regenerating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Regenerate Quiz
+                </>
+              )}
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {regenerateCount >= MAX_REGENERATIONS 
+                ? '⚠️ Maximum regenerations reached (2/2)' 
+                : `${regenerateCount}/${MAX_REGENERATIONS} regenerations used`}
+            </span>
           </div>
         </div>
 

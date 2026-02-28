@@ -68,7 +68,7 @@ export interface Batch {
 }
 
 export interface Quiz {
-  id: string;
+  _id: string;
   moduleId: string;
   title: string;
   questions: QuizQuestion[];

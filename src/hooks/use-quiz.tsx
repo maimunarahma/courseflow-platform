@@ -9,7 +9,7 @@ export interface Question {
 }
 
 export interface Quiz {
-  id: string;
+  _id: string;
   title: string;
   course: {
     _id: string;
@@ -39,10 +39,12 @@ export const useQuizzes = (courseId?: string) => {
 
   // Create quiz
   const createQuizMutation = useMutation({
-    mutationFn: async (quizData: Partial<Quiz>) => {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/quiz/generate/${courseId}`, quizData, {
-        withCredentials: true,
-      });
+    mutationFn: async (quizData: any) => {
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/quiz/generate/${courseId}`, 
+        quizData, 
+        { withCredentials: true }
+      );
       return res.data;
     },
     onSuccess: () => {
