@@ -17,6 +17,7 @@ export default function CourseDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated, user } = useAuth();
+    const { enrollments, } =useEnrollments();
     const { toast } = useToast();
     const { courses } = useCourses();
     
@@ -25,9 +26,9 @@ export default function CourseDetails() {
     const course = courses.find((c) => c._id === id);
     
     // Check enrollment status using mock data (needs to be replaced with API data)
-    const isEnrolled = user && mockEnrollments.some((e) => e.courseId === id && e.userId === user.id);
+    const isEnrolled = user && enrollments.some((e) => e._id === id && e.userId === user.id);
     const { enrollCourse } = useEnrollments();
-
+    console.log(enrollments ,isEnrolled)
     if (!course) {
         return (
             <div className="container py-20 text-center">

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-
+// import { AIRecommendations } from '@/components/AIRecommendations';
 import { useEnrollments } from '@/hooks/use-enroll';
 import { useCourses } from '@/hooks/use-courses';
 
@@ -140,31 +140,39 @@ export default function Dashboard() {
         </div>
 
         {/* Recommended Courses */}
-        <div>
-          <h2 className="font-display text-2xl mb-6">Recommended for You</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses
-              .filter((c) => !enrollments.some((e) => e._id === c._id))
-              .slice(0, 3)
-              .map((course) => (
-                <Card key={course._id} className="overflow-hidden hover:shadow-card transition-shadow">
-                  <img
-                    src={course.thumbnail}
-                    alt={course.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <CardContent className="p-5">
-                    <h3 className="font-semibold mb-2 line-clamp-2">{course.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{course.instructor}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-display font-bold text-lg">${course.price}</span>
-                      <Button asChild size="sm">
-                        <Link to={`/courses/${course._id}`}>View Course</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* AI-Powered Recommendations */}
+          <div className="lg:col-span-1">
+            {/* <AIRecommendations /> */}
+          </div>
+
+          {/* Regular Recommendations */}
+          <div className="lg:col-span-2">
+            <h2 className="font-display text-2xl mb-6">More Courses for You</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {courses
+                .filter((c) => !enrollments.some((e) => e._id === c._id))
+                .slice(0, 4)
+                .map((course) => (
+                  <Card key={course._id} className="overflow-hidden hover:shadow-card transition-shadow">
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      className="w-full h-40 object-cover"
+                    />
+                    <CardContent className="p-5">
+                      <h3 className="font-semibold mb-2 line-clamp-2">{course.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">{course.instructor}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="font-display font-bold text-lg">${course.price}</span>
+                        <Button asChild size="sm">
+                          <Link to={`/courses/${course._id}`}>View Course</Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
           </div>
         </div>
       </div>

@@ -31,14 +31,16 @@ export const useQuizzes = (courseId?: string) => {
         `${import.meta.env.VITE_SERVER_URL}/quiz/${courseId}`,
         { withCredentials: true }
       );
-      return res.data.data; // <-- this now matches backend
+      // Backend returns a single quiz object, wrap it in an array
+      const data = res.data.data || res.data;
+      return Array.isArray(data) ? data : [data];
     },
   });
 
   // Create quiz
   const createQuizMutation = useMutation({
     mutationFn: async (quizData: Partial<Quiz>) => {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/quiz`, quizData, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/quiz/generate/${courseId}`, quizData, {
         withCredentials: true,
       });
       return res.data;

@@ -16,14 +16,8 @@ import { useState } from 'react';
 export function Header() {
   const { user, isAuthenticated,  logout } = useAuth();
   console.log(user )
-  fetch(`${import.meta.env.VITE_SERVER_URL}/debug/cookies`, { credentials: 'include' })
-  .then(r => {
-    r.json();
-    console.log(r.json())
-    
-  })
-  
-  .catch(console.error);
+
+ 
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,7 +100,7 @@ export function Header() {
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
-                {isAuthenticated && (
+                {user?.role === 'admin' && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin" className="cursor-pointer">
                       <Shield className="mr-2 h-4 w-4" />

@@ -12,6 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useEnrollments } from '@/hooks/use-enroll';
 import { useCourses } from '@/hooks/use-courses';
+import { AIAssistant } from '@/components/AIAssistant';
+import { AIStudyNotes } from '@/components/AIStudyNotes';
+import { AICodeReview } from '@/components/AICodeReview';
 
 // Placeholder for saving progress (Replace with your actual useMutation hook)
 const useSaveProgressMutation = () => {
@@ -27,6 +30,7 @@ const useSaveProgressMutation = () => {
 
 export default function Learn() {
   const { id: courseId } = useParams<{ id: string }>();
+  console.log(courseId)
   const { user } = useAuth();
   const { toast } = useToast();
   const { enrollments, refetchEnrollments } = useEnrollments();
@@ -79,7 +83,7 @@ export default function Learn() {
     }
   }, [course, enrollment, allLessons, currentLessonId, courseId]);
 
-
+  console.log(syllabus)
   // Handle initial loading and error states
   if (!courses || courses.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">Loading Course Data...</div>;
@@ -220,9 +224,9 @@ export default function Learn() {
                       );
                     })}
 
-                    {module.quizId && (
+                    {module && (
                       <Link
-                        to={`/quiz/${course._id}/${module.quizId}`}
+                        to={`/quiz/${course._id}`}
                         className="w-full flex items-center gap-2 p-2 rounded-lg text-left text-sm hover:bg-secondary transition-colors"
                       >
                         <Award className="h-4 w-4 text-warning flex-shrink-0" />
@@ -285,9 +289,16 @@ export default function Learn() {
         <div className="flex-1 flex flex-col">
           {currentLesson ? (
             <>
-              <div className="aspect-video bg-foreground">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/X8BYu3dMKf0" title="YouTube video player"
-                  frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+              <div className="relative aspect-video bg-foreground w-full">
+                <iframe 
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/X8BYu3dMKf0" 
+                  title="YouTube video player"
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  referrerPolicy="strict-origin-when-cross-origin" 
+                  allowFullScreen
+                />
               </div>
 
               <div className="p-6 border-t border-border">
@@ -326,6 +337,16 @@ export default function Learn() {
                       </Button>
                     )}
                   </div>
+
+                  {/* AI Study Notes Generator */}
+                  <AIStudyNotes
+                    lessonTitle={currentLesson.title}
+                    courseTitle={course?.title || ''}
+                    lessonContent={`Lesson content for ${currentLesson.title}`}
+                  />
+
+                  {/* AI Code Review */}
+                  <AICodeReview courseId={courseId} />
                 </div>
               </div>
             </>
@@ -339,6 +360,12 @@ export default function Learn() {
           )}
         </div>
       </main>
+
+      {/* AI Learning Assistant */}
+      <AIAssistant
+        courseId={courseId!}
+        courseTitle={course.title}
+      />
     </div>
   );
 }

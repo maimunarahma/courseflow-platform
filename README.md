@@ -1,8 +1,40 @@
-# CourseMaster – Client (Vite + React + TypeScript)
+# CourseMaster – AI-Powered Learning Platform 🚀🤖
 
-A production-ready **E-learning platform frontend** built using **Vite + React + TypeScript** with **ShadCN UI**, **React Query**, and **Zod**. This project is part of the full-stack CourseMaster MERN-based system.
+A production-ready **AI-enhanced E-learning platform** built with **Vite + React + TypeScript**, **ShadCN UI**, **React Query**, and **OpenAI Integration**. Features intelligent learning assistance, automated quiz generation, and personalized course recommendations.
 
-This client connects to the CourseMaster backend API (Express + MongoDB) and provides a fast, scalable, and modern UI for Students and Admins.
+This client connects to the CourseMaster backend API (Express + MongoDB) and provides a fast, scalable, and AI-powered UI for Students and Admins.
+
+---
+
+## ✨ AI Features (What Makes This Special)
+
+### 🤖 **1. AI Learning Assistant**
+- **Context-aware chatbot** that helps students during lessons
+- Answers questions based on current lesson content
+- Provides examples, explanations, and guided learning
+- Multi-turn conversations with memory
+
+### 🎯 **2. AI Quiz Generator**
+- **Automatically generates quiz questions** from lesson content
+- Creates multiple-choice questions with explanations
+- Adapts difficulty based on course level
+- Instant feedback and detailed scoring
+
+### 📊 **3. Smart Course Recommendations**
+- **Personalized learning path** based on user's progress
+- ML-powered relevance scoring (0-100%)
+- Considers completed courses, interests, and skill level
+- Updates dynamically as user learns
+
+### 📝 **4. AI Study Notes Generator**
+- Auto-summarizes lessons into key points
+- Generates practice exercises
+- Creates study guides automatically
+
+### 💻 **5. AI Code Review (Coming Soon)**
+- Automated feedback on programming assignments
+- Best practices suggestions
+- Bug detection and performance tips
 
 ---
 
@@ -12,6 +44,7 @@ This client connects to the CourseMaster backend API (Express + MongoDB) and pro
 
 * **React.js + TypeScript**
 * **Vite** (blazing fast dev & build)
+* **OpenAI API / Claude / Gemini** (AI features)
 * **React Router DOM** (client-side routing)
 * **ShadCN UI + Radix UI** (production-ready UI components)
 * **React Query (@tanstack/react-query)** for server-state & caching
