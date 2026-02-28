@@ -16,8 +16,19 @@ import { useState } from 'react';
 export function Header() {
   const { user, isAuthenticated,  logout } = useAuth();
   console.log(user )
+<<<<<<< HEAD
 
  
+=======
+fetch(`${import.meta.env.VITE_SERVER_URL}/debug/cookies`, {
+  credentials: "include"
+})
+  .then(r => r.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+
+>>>>>>> 286400a2dade3c06161dc143ecfae6c56c86edeb
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
