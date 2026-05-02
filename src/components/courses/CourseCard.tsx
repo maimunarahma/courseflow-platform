@@ -50,7 +50,7 @@ export function CourseCard({ course }: CourseCardProps) {
           <div className="flex items-center gap-2 mb-4">
             <Avatar className="h-6 w-6">
               <AvatarImage src={course.instructorAvatar} />
-              <AvatarFallback className="text-xs">{course?.instructor.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="text-xs">{course?.instructor?.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-sm text-muted-foreground">{course.instructor}</span>
           </div>
